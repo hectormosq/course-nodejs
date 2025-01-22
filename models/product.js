@@ -1,24 +1,5 @@
 const getDb = require("../util/database").getDb;
 const mongoDb = require("mongodb");
-
-const fs = require("fs");
-const path = require("path");
-const rootDir = require("../util/path");
-
-const Cart = require("./cart");
-
-const p = path.join(rootDir, "data", "products.json");
-
-const getProductFromFile = (cb) => {
-  fs.readFile(p, (err, fileContent) => {
-    if (err) {
-      cb([]);
-    } else {
-      cb(JSON.parse(fileContent));
-    }
-  });
-};
-
 class Product {
   constructor(title, imageUrl, description, price, id) {
     this.title = title;
@@ -32,14 +13,12 @@ class Product {
     const db = getDb();
     let dbOp;
     if (this._id) {
-      dbOp = db
-        .collection("products")
-        .updateOne(
-          { _id: this._id },
-          {
-            $set: this,
-          }
-        );
+      dbOp = db.collection("products").updateOne(
+        { _id: this._id },
+        {
+          $set: this,
+        }
+      );
     } else {
       dbOp = db.collection("products").insertOne(this);
     }
@@ -69,15 +48,13 @@ class Product {
   }
 
   static deleteById(id) {
-    getProductFromFile((products) => {
-      const product = products.find((prod) => prod.id === id);
-      const updatedProducts = products.filter((prod) => prod.id !== id);
-      fs.writeFile(p, JSON.stringify(updatedProducts), (err) => {
-        if (!err) {
-          Cart.deleteProduct(id, product.price);
-        }
-      });
-    });
+    const db = getDb();
+    return db.collection("products")
+      .deleteOne({ _id: mongoDb.ObjectId.createFromHexString(id) })
+      .then(() => {
+        //Cart.deleteProduct(id, product.price);
+      })
+      .catch((err) => console.log(err));
   }
 }
 
