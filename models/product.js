@@ -1,4 +1,6 @@
 const getDb = require("../util/database").getDb;
+const mongoDb = require("mongodb");
+
 const fs = require("fs");
 const path = require("path");
 const rootDir = require("../util/path");
@@ -45,6 +47,16 @@ class Product {
       .catch((err) => console.log(err));
   }
 
+  static findById(prodId) {
+    const db = getDb();
+    return db
+      .collection("products")
+      .find({ _id: mongoDb.ObjectId.createFromHexString(prodId) })
+      .next()
+      .then((product) => product)
+      .catch((err) => console.log(errr));
+  }
+
   static deleteById(id) {
     getProductFromFile((products) => {
       const product = products.find((prod) => prod.id === id);
@@ -54,13 +66,6 @@ class Product {
           Cart.deleteProduct(id, product.price);
         }
       });
-    });
-  }
-
-  static findById(id, cb) {
-    getProductFromFile((products) => {
-      const product = products.find((p) => p.id === id);
-      cb(product);
     });
   }
 }
