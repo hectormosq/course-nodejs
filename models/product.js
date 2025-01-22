@@ -29,7 +29,6 @@ class Product {
 
   save() {
     const db = getDb();
-    console.log(db);
     return db
       .collection("products")
       .insertOne(this)
