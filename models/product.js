@@ -6,7 +6,7 @@ class Product {
     this.imageUrl = imageUrl ? imageUrl : "https://place-hold.it/300";
     this.description = description;
     this.price = price;
-    this._id = mongoDb.ObjectId.createFromHexString(id);
+    this._id = id ? mongoDb.ObjectId.createFromHexString(id) : undefined;
   }
 
   save() {
