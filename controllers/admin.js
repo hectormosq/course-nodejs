@@ -51,15 +51,21 @@ exports.postEditProduct = (req, res, next) => {
   const updatedImageUrl = req.body.imageUrl;
   const updatedPrice = req.body.price;
   const updatedDescription = req.body.description;
+
   const updatedProduct = new Product(
-    prodId,
     updatedTitle,
     updatedImageUrl,
     updatedDescription,
-    updatedPrice
+    updatedPrice,
+    prodId
   );
-  updatedProduct.save();
-  res.redirect("/admin/products");
+
+  updatedProduct
+    .save()
+    .then((productData) => {
+      res.redirect("/admin/products");
+    })
+    .catch((err) => console.log(err));
 };
 
 exports.getProducts = (req, res, next) => {
