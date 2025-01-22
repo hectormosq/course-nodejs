@@ -18,14 +18,9 @@ const getProductFromFile = (cb) => {
 };
 
 class Product {
-  constructor(
-    title,
-    imageUrl = "https://place-hold.it/300",
-    description,
-    price
-  ) {
+  constructor(title, imageUrl, description, price) {
     this.title = title;
-    this.imageUrl = imageUrl;
+    this.imageUrl = imageUrl ? imageUrl : "https://place-hold.it/300";
     this.description = description;
     this.price = price;
   }
@@ -33,9 +28,20 @@ class Product {
   save() {
     const db = getDb();
     console.log(db);
-    return db.collection("products")
+    return db
+      .collection("products")
       .insertOne(this)
       .then((result) => console.log(result))
+      .catch((err) => console.log(err));
+  }
+
+  static fetchAll() {
+    const db = getDb();
+    return db
+      .collection("products")
+      .find()
+      .toArray()
+      .then((products) => products)
       .catch((err) => console.log(err));
   }
 
@@ -49,10 +55,6 @@ class Product {
         }
       });
     });
-  }
-
-  static fetchAll(cb) {
-    getProductFromFile(cb);
   }
 
   static findById(id, cb) {
