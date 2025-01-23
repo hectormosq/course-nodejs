@@ -21,11 +21,11 @@ module.exports = class Cart {
       // Add new product/ increase quantity
       if (existingProduct) {
         updatedProduct = { ...existingProduct };
-        updatedProduct.qty = updatedProduct.qty + 1;
+        updatedProduct.quantity = updatedProduct.quantity + 1;
         cart.products = [...cart.products];
         cart.products[existingProductIndex] = updatedProduct;
       } else {
-        updatedProduct = { id: id, qty: 1 };
+        updatedProduct = { id: id, quantity: 1 };
         cart.products = [...cart.products, updatedProduct];
       }
       cart.totalPrice = cart.totalPrice + +productPrice;
@@ -46,7 +46,7 @@ module.exports = class Cart {
       if(!product) {
         return
       }
-      const productQty = product.qty;
+      const productQty = product.quantity;
       updatedCart.products = updatedCart.products.filter(
         (prod) => prod.id !== id
       );
