@@ -1,11 +1,12 @@
 const getDb = require("../util/database").getDb;
 const mongoDb = require("mongodb");
 class Product {
-  constructor(title, imageUrl, description, price, id) {
+  constructor(title, imageUrl, description, price, userId, id) {
     this.title = title;
     this.imageUrl = imageUrl ? imageUrl : "https://place-hold.it/300";
     this.description = description;
     this.price = price;
+    this.userId = userId;
     this._id = id ? mongoDb.ObjectId.createFromHexString(id) : undefined;
   }
 
