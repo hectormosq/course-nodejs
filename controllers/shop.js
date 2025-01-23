@@ -40,29 +40,16 @@ exports.getProduct = (req, res, next) => {
 };
 
 exports.getCart = (req, res, next) => {
-  Cart.getCart((cart) => {
-    Product.fetchAll()
-      .then((products) => {
-        const cartProducts = [];
-        for (product of products) {
-          const cartProductData = cart.products.find(
-            (prod) => prod.id === product.id
-          );
-          if (cartProductData) {
-            cartProducts.push({
-              productData: product,
-              qty: cartProductData.qty,
-            });
-          }
-        }
-        res.render("shop/cart", {
-          path: "/cart",
-          pageTitle: "Your Cart",
-          products: cartProducts,
-        });
-      })
-      .catch((err) => console.log(err));
-  });
+  req.user
+    .getCart()
+    .then((products) => {
+      res.render("shop/cart", {
+        path: "/cart",
+        pageTitle: "Your Cart",
+        products,
+      });
+    })
+    .catch((err) => console.log(err));
 };
 
 exports.postCart = (req, res, next) => {
@@ -70,11 +57,9 @@ exports.postCart = (req, res, next) => {
   Product.findById(prodId)
     .then((product) => {
       return req.user.addToCart(product);
-      // Cart.addProduct(prodId, product.price);
-      // res.redirect("/cart");
     })
     .then((result) => {
-      console.log(result);
+      res.redirect("/cart");
     })
     .catch((err) => console.log(err));
 };

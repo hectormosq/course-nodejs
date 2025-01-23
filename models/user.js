@@ -2,9 +2,6 @@ const { getDb } = require("../util/database");
 const mongoDb = require("mongodb");
 
 const ObjectId = mongoDb.ObjectId.createFromHexString;
-
-const db = require("../util/database").getDb;
-
 class User {
   constructor(username, email, cart, id) {
     this.name = username;
@@ -41,6 +38,27 @@ class User {
   static findById(userId) {
     const db = getDb();
     return db.collection("users").findOne({ _id: ObjectId(userId) });
+  }
+
+  getCart() {
+    const db = getDb();
+    const productIds = this.cart.items.map((item) => {
+      return item.productId;
+    });
+    return db
+      .collection("products")
+      .find({ _id: { $in: productIds } })
+      .toArray()
+      .then((products) => {
+        return products.map((product) => {
+          return {
+            ...product,
+            qty: this.cart.items.find((i) => {
+              return i.productId.toString() === product._id.toString();
+            }).qty,
+          };
+        });
+      });
   }
 }
 
