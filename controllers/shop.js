@@ -69,8 +69,12 @@ exports.postCart = (req, res, next) => {
   const prodId = req.body.productId;
   Product.findById(prodId)
     .then((product) => {
-      Cart.addProduct(prodId, product.price);
-      res.redirect("/cart");
+      return req.user.addToCart(product);
+      // Cart.addProduct(prodId, product.price);
+      // res.redirect("/cart");
+    })
+    .then((result) => {
+      console.log(result);
     })
     .catch((err) => console.log(err));
 };
