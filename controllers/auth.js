@@ -4,16 +4,19 @@ exports.getLogin = (req, res, next) => {
   res.render("auth/login", {
     path: "/login",
     pageTitle: "Login",
-    isAuthenticated: req.session.isLoggedIn,
+    isAuthenticated: false
   });
 };
 
 exports.postLogin = (req, res, next) => {
-  User.findById("67921d8ece2991921f015647")
+  User.findById("6797a7145df211004ed8506d")
     .then((user) => {
       req.session.isLoggedIn = true;
       req.session.user = user;
-      res.redirect("/");
+      req.session.save(err => {
+        console.log('save.err', err);
+        res.redirect('/');
+      });
     })
     .catch((err) => console.log(err));
 };
