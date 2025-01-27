@@ -7,7 +7,6 @@ const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session);
 
 const errorController = require("./controllers/error");
-const User = require("./models/user");
 
 const app = express();
 const store = new MongoDBStore({
@@ -32,15 +31,6 @@ app.use(
     store,
   })
 );
-
-app.use((req, res, next) => {
-  User.findById("67921d8ece2991921f015647")
-    .then((user) => {
-      req.user = new User(user.name, user.email, user.cart, user._id);
-      next();
-    })
-    .catch((err) => console.log(err));
-});
 
 app.use("/admin", adminRoutes);
 app.use(shopRoutes);
