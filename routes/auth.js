@@ -23,6 +23,12 @@ router.post(
     body("password", "Enter a password with at least 5 characters").isLength({
       min: 5,
     }),
+    body("confirmationPassword").custom((value, { req }) => {
+      if (value !== req.body.password) {
+        throw new Error("Passwords have to match!");
+      }
+      return true;
+    }),
   ],
   authController.postSignup
 );
