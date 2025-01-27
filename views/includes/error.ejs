@@ -1,0 +1,9 @@
+<% if (errorMessage && errorMessage.length > 0) { %>
+    <ul class="user-message user-message--error">
+        <% errorMessage.forEach(error => { %>
+            <li class="user-message__item">
+                <%= error %>
+            </li>
+        <% }) %>
+    </ul>
+<% } %>

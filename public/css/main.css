@@ -235,6 +235,10 @@ form {
   text-align: center;
 } 
 
+.user-message__item {
+  list-style: none;
+} 
+
 .user-message--error {
   border-color: red;
   background-color: lightcoral;

@@ -14,7 +14,9 @@ exports.postAddProduct = (req, res, next) => {
     ? req.body.imageUrl
     : "https://place-hold.it/300";
   const price = req.body.price;
-  const description = req.body.description ? req.body.description : 'No description';
+  const description = req.body.description
+    ? req.body.description
+    : "No description";
   const product = new Product({
     title: title,
     price: price,
@@ -62,15 +64,19 @@ exports.postEditProduct = (req, res, next) => {
 
   Product.findById(prodId)
     .then((product) => {
+      if (product.userId.toString() !== req.user._id.toString()) {
+        req.flash("error", "User cannot edit Product");
+        return res.redirect("/admin/products");
+      }
       product.title = updatedTitle;
       product.price = updatedPrice;
       product.description = updatedDescription;
       product.imageUrl = updatedImageUrl;
-      return product.save();
+      return product.save().then((result) => {
+        res.redirect("/admin/products");
+      });
     })
-    .then((result) => {
-      res.redirect("/admin/products");
-    })
+
     .catch((err) => console.log(err));
 };
 
@@ -81,6 +87,7 @@ exports.getProducts = (req, res, next) => {
         prods: products,
         pageTitle: "Admin Products",
         path: "/admin/products",
+        errorMessage: req.flash("error"),
       });
     })
     .catch((err) => console.log(err));
@@ -88,8 +95,10 @@ exports.getProducts = (req, res, next) => {
 
 exports.postDeleteProduct = (req, res, next) => {
   const prodId = req.body.productId;
-  Product.findByIdAndRemove(prodId)
+  Product.deleteOne({ _id: prodId, userId: req.user._id })
     .then((product) => {
+      console.log({ product });
+      req.flash("error", "Product not deleted, check if you are allow to delete it");
       res.redirect("/admin/products");
     })
     .catch((err) => console.log(err));
