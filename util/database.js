@@ -1,4 +1,5 @@
 const mongodb = require("mongodb");
+const MONGO_URI = require('./connection').connectionParam;
 const MongoClient = mongodb.MongoClient;
 
 let _db;
@@ -7,7 +8,7 @@ const mongoConnect = (callback) => {
 
   // TODO how password should be handled
   MongoClient.connect(
-    "mongodb+srv://hectormosq:PASSWORD@cluster0.r35mj.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+    MONGO_URI
   )
     .then((client) => {
       console.log("Connected!");
