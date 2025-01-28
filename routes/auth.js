@@ -18,19 +18,26 @@ router.post(
       .custom((value, { req }) => {
         return User.findOne({ email: value }).then((userDoc) => {
           if (userDoc) {
-            return Promise.reject("E-mail exists already, please pick a different one");
+            return Promise.reject(
+              "E-mail exists already, please pick a different one"
+            );
           }
         });
+      })
+      .normalizeEmail(),
+    body("password", "Enter a password with at least 5 characters")
+      .isLength({
+        min: 5,
+      })
+      .trim(),
+    body("confirmPassword")
+      .trim()
+      .custom((value, { req }) => {
+        if (value !== req.body.password) {
+          throw new Error("Passwords have to match!");
+        }
+        return true;
       }),
-    body("password", "Enter a password with at least 5 characters").isLength({
-      min: 5,
-    }),
-    body("confirmPassword").custom((value, { req }) => {
-      if (value !== req.body.password) {
-        throw new Error("Passwords have to match!");
-      }
-      return true;
-    }),
   ],
   authController.postSignup
 );
